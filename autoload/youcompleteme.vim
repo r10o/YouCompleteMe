@@ -85,6 +85,8 @@ function! youcompleteme#Enable()
   call s:SetUpCompleteopt()
   call s:SetUpKeyMappings()
 
+  let s:force_semantic = g:ycm_switch_local_semantic
+
   if g:ycm_show_diagnostics_ui
     call s:TurnOffSyntasticForCFamily()
   endif
@@ -613,7 +615,7 @@ function! s:OnTextChangedInsertMode()
   " inserts something like a "operator[]" candidate string which fails
   " CurrentIdentifierFinished check.
   if s:force_semantic && !s:Pyeval( 'base.LastEnteredCharIsIdentifierChar()' )
-    let s:force_semantic = 0
+    let s:force_semantic = g:ycm_switch_local_semantic
   endif
 
   if &completefunc == "youcompleteme#CompleteFunc" &&
@@ -639,7 +641,7 @@ function! s:OnInsertLeave()
   endif
 
   call timer_stop( s:pollers.completion.id )
-  let s:force_semantic = 0
+  let s:force_semantic = g:ycm_switch_local_semantic
   let s:completion = s:default_completion
 
   call s:OnFileReadyToParse()
@@ -672,7 +674,7 @@ function! s:IdentifierFinishedOperations()
     return
   endif
   exec s:python_command "ycm_state.OnCurrentIdentifierFinished()"
-  let s:force_semantic = 0
+  let s:force_semantic = g:ycm_switch_local_semantic
   let s:completion = s:default_completion
 endfunction
 
@@ -725,7 +727,7 @@ endfunction
 
 function! s:InvokeSemanticCompletion()
   if &completefunc == "youcompleteme#CompleteFunc"
-    let s:force_semantic = 1
+    let s:force_semantic = !g:ycm_switch_local_semantic
     exec s:python_command "ycm_state.SendCompletionRequest( True )"
 
     call s:PollCompletion()
