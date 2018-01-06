@@ -615,7 +615,7 @@ function! s:OnTextChangedInsertMode()
   " inserts something like a "operator[]" candidate string which fails
   " CurrentIdentifierFinished check.
   if s:force_semantic && !s:Pyeval( 'base.LastEnteredCharIsIdentifierChar()' )
-    let s:force_semantic = g:ycm_switch_local_semantic
+    let s:force_semantic = 0
   endif
 
   if &completefunc == "youcompleteme#CompleteFunc" &&
@@ -625,6 +625,8 @@ function! s:OnTextChangedInsertMode()
     " Immediately call previous completion to avoid flickers.
     call s:Complete()
     call s:InvokeCompletion()
+
+    let s:force_semantic = g:ycm_switch_local_semantic
   endif
 
   exec s:python_command "ycm_state.OnCursorMoved()"
